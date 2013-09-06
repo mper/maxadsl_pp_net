@@ -2,6 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxAdsl_PP_Net", "MaxAdsl_PP_Net\MaxAdsl_PP_Net.csproj", "{C303F88B-0421-4EC6-A4CC-7FF3F8005A07}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E37EA1C1-156D-4406-8905-E54FC5419EA3} = {E37EA1C1-156D-4406-8905-E54FC5419EA3}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DummyHtWeb", "DummyHtWeb\DummyHtWeb.csproj", "{E37EA1C1-156D-4406-8905-E54FC5419EA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +18,10 @@ Global
 		{C303F88B-0421-4EC6-A4CC-7FF3F8005A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C303F88B-0421-4EC6-A4CC-7FF3F8005A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C303F88B-0421-4EC6-A4CC-7FF3F8005A07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E37EA1C1-156D-4406-8905-E54FC5419EA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E37EA1C1-156D-4406-8905-E54FC5419EA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E37EA1C1-156D-4406-8905-E54FC5419EA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E37EA1C1-156D-4406-8905-E54FC5419EA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

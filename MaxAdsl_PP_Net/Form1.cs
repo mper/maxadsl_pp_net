@@ -25,13 +25,18 @@ namespace MaxAdsl_PP_Net
             // Set chrome user agent
             client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36");
 
+            // Ht web credidential fields
+            //NameValueCollection webLoginCredidentials = new NameValueCollection(){
+            //    {"username", ""}, 
+            //    {"new-pass", ""}
+            //};
             NameValueCollection webLoginCredidentials = new NameValueCollection(){
-                {"uname", "test"}, 
-                {"pwd", "test1"}
+                {"username", "test"}, 
+                {"password", "test1"}
             };
-            client.UploadValues("http://localhost/login", "POST", webLoginCredidentials);
+            client.UploadValues("http://localhost/DummyHtWeb/Account/Login", "POST", webLoginCredidentials);
 
-            string resp = client.DownloadString("http://localhost/data");
+            string resp = client.DownloadString("http://localhost/DummyHtWeb/Secured");
             label1.Text = resp;
 
             byte [] secret = { 0, 1, 1, 2, 3, 5, 8, 13, 21 };
