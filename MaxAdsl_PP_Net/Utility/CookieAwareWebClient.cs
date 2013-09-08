@@ -18,11 +18,9 @@ namespace MaxAdsl_PP_Net.Utility
         protected override WebRequest GetWebRequest(Uri address)
         {
             WebRequest request = base.GetWebRequest(address);
-
-            var castRequest = request as HttpWebRequest;
-            if (castRequest != null)
+            if (request != null)
             {
-                castRequest.CookieContainer = this.CookieContainer;
+                ((HttpWebRequest)request).CookieContainer = this.CookieContainer;
             }
 
             return request;

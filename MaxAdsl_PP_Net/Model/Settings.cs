@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MaxAdsl_PP_Net.Model
 {
-    internal class SettingsData
+    internal class UserSettingsData
     {
         string username { get; set; }
         string password { get; set; }
