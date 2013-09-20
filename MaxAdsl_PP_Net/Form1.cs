@@ -17,11 +17,11 @@ namespace MaxAdsl_PP_Net
     public partial class Form1 : Form
     {
 
-        string webStartUrl = Properties.Settings.Default.WebMobileStartUrl;
-        string webLoginUrl = Properties.Settings.Default.WebLoginUrl;
-        string webTrafficUrl = Properties.Settings.Default.WebMobileTraficUrl;
-        string webUsernameFieldName = Properties.Settings.Default.WebLoginUsernameFieldName;
-        string webPasswordFieldName = Properties.Settings.Default.WebLoginPasswordFieldName;
+        string webStartUrl;
+        string webLoginUrl;
+        string webTrafficUrl;
+        string webUsernameFieldName;
+        string webPasswordFieldName;
 
         private WebClient client;
 
@@ -36,6 +36,12 @@ namespace MaxAdsl_PP_Net
         {
             InitializeComponent();
 
+            webStartUrl = Properties.Settings.Default.WebMobileStartUrl;
+            webLoginUrl = Properties.Settings.Default.WebLoginUrl;
+            webTrafficUrl = Properties.Settings.Default.WebMobileTraficUrl;
+            webUsernameFieldName = Properties.Settings.Default.WebLoginUsernameFieldName;
+            webPasswordFieldName = Properties.Settings.Default.WebLoginPasswordFieldName;
+
 #if DEBUG
             //webLoginUrl = Properties.Settings.Default.DummyWebLogin;
             //webSecuredUrl = Properties.Settings.Default.DummyWebSecured;
@@ -44,7 +50,7 @@ namespace MaxAdsl_PP_Net
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             client = new Utility.CookieAwareWebClient();
             // Set chrome user agent
-            client.Headers.Add("User-Agent", ConfigurationManager.AppSettings["emulate_user_agent"]);
+            client.Headers.Add(HttpRequestHeader.UserAgent, ConfigurationManager.AppSettings["emulate_user_agent"]);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -57,9 +63,9 @@ namespace MaxAdsl_PP_Net
 
             TrafficInfo trafficInfo = GetTrafficInfo(serviceId);
 
-            lblResponse.Text += "D:" + trafficInfo.Downloaded;
-            lblResponse.Text += "U:" + trafficInfo.Uploaded;
-            lblResponse.Text += "T:" + trafficInfo.Total;
+            lblResponse.Text += "D:" + trafficInfo.Downloaded + Environment.NewLine;
+            lblResponse.Text += "U:" + trafficInfo.Uploaded + Environment.NewLine;
+            lblResponse.Text += "T:" + trafficInfo.Total + Environment.NewLine;
 
         }
 
@@ -93,7 +99,16 @@ namespace MaxAdsl_PP_Net
         private TrafficInfo GetTrafficInfo(string serviceId)
         {
             string webResponse = client.DownloadString(webTrafficUrl + serviceId);
-            string trafficData = Regex.Match(webResponse, "<div class=[\"']miData[\"']>.*?</div>").Value;
+            if (webResponse.Contains("UÄŤitavam podatke"))
+            {
+                string pageId = Regex.Match(webResponse, "(<form.*?requestedPageId=)(\\d*?)([\"'].*?>)").Groups[2].Value;
+                string serviceIdToken = Regex.Match(webResponse, "(_serviceIdToken.*?=.*?[\"'])([\\w-]*?)([\"'])").Groups[2].Value;
+                WaitForTraficInfoReady(pageId, serviceIdToken);
+                webResponse = client.DownloadString(webTrafficUrl + serviceId);
+            }
+
+            string trafficData = Regex.Match(webResponse, "<div class=[\"']miData[\"']>.*?</div>", RegexOptions.Singleline)
+                    .Value;
 
             Match m = Regex.Match(trafficData,
                 "(<div class=[\"']miData[\"']>[^>]*<p.*?>)([0-9, BKMG]*)(<.*?/p.*?>[^>]*<p.*?>)([0-9, BKMG]*)(<.*?/p.*?>)");
@@ -101,17 +116,51 @@ namespace MaxAdsl_PP_Net
             string sDownloaded = m.Groups[2].Value;
             string sUploaded = m.Groups[4].Value;
 
-            int iDownloaded, iUploaded;
-            int.TryParse(Regex.Replace(sDownloaded, "[a-z A-z]", "").Replace(',', '.'), out iDownloaded);
-            int.TryParse(Regex.Replace(sUploaded, "[a-z A-z]", "").Replace(',', '.'), out iUploaded);
+            float iDownloaded, iUploaded;
+            float.TryParse(Regex.Replace(sDownloaded, "[a-z A-z]", ""), out iDownloaded);
+            float.TryParse(Regex.Replace(sUploaded, "[a-z A-z]", ""), out iUploaded);
 
 
-            return new TrafficInfo
+            TrafficInfo retVal = new TrafficInfo
             {
                 Downloaded = sDownloaded,
                 Uploaded = sUploaded,
                 Total = (iDownloaded + iUploaded).ToString()
             };
+            return retVal;
+        }
+
+        private void WaitForTraficInfoReady(string pageId, string serviceIdToken)
+        {
+
+            string verifierUrl = "https://m.moj.hrvatskitelekom.hr/App_Modules__SnT.THTCms.CSC.Modules.Package__SnT.THTCms.CSC.Modules.Profile.MojTProfileService.asmx/VerifyService";
+
+            NameValueCollection verifyService = new NameValueCollection()
+            {
+                {"requestedPageId", pageId},
+                {"serviceIdToken", serviceIdToken}
+            };
+
+            client.Headers.Add(HttpRequestHeader.Pragma, "no-cache");
+            client.Headers.Add("Origin", "https://m.moj.hrvatskitelekom.hr");
+            client.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            
+            do
+            {
+                System.Threading.Thread.Sleep(1000);
+                byte[] loginRawResponse = client.UploadValues(verifierUrl, "POST", verifyService);
+#if DEBUG
+                string webResponse = Encoding.UTF8.GetString(loginRawResponse);
+#endif                
+                //if(client.ResponseHeaders["Content-Length"] == "10")
+                //    break;
+                System.Threading.Thread.Sleep(15000);
+                break;
+            } while (true);
+
+            client.Headers.Remove(HttpRequestHeader.Pragma);
+            client.Headers.Remove("Origin");
+            client.Headers.Remove("X-Requested-With");
         }
 
     }

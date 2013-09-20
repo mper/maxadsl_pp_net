@@ -22,6 +22,18 @@ namespace MaxAdsl_PP_Net.Properties {
                 return defaultInstance;
             }
         }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome" +
+            "/29.0.1547.57 Safari/537.36")]
+        public string emulate_user_agent
+        {
+            get
+            {
+                return ((string)(this["emulate_user_agent"]));
+            }
+        }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
