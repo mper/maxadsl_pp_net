@@ -5,3 +5,6 @@ https://servisi.tportal.hr/servisi/rest/oauth1/clientprocess
 https://servisi.tportal.hr/servisi/anonymous.jsf2?conversationId=abcdefghijklmnop
 
 https://moj.hrvatskitelekom.hr/internet/ispis-spajanja?serviceid=1234567
+
+
+https://m.moj.hrvatskitelekom.hr/App_Modules__SnT.THTCms.CSC.Modules.Package__SnT.THTCms.CSC.Modules.Profile.MojTProfileService.asmx/VerifyService
