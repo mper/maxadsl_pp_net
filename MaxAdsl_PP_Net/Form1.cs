@@ -22,8 +22,11 @@ namespace MaxAdsl_PP_Net
         string webTrafficUrl;
         string webUsernameFieldName;
         string webPasswordFieldName;
+        string serviceId;
 
         private WebClient client;
+
+        private Model.UserSettingsData userSettings;
 
         private class TrafficInfo
         {
@@ -35,6 +38,13 @@ namespace MaxAdsl_PP_Net
         public Form1()
         {
             InitializeComponent();
+
+            lblResponse.Text = "";
+            lblSettingsResponse.Text = "";
+
+            userSettings = Model.UserSettingsData.GetUserSettingsInstance();
+            txtUsername.Text = userSettings.Username;
+            //txtPassword.Text = userSettings.Password;
 
             webStartUrl = Properties.Settings.Default.WebMobileStartUrl;
             webLoginUrl = Properties.Settings.Default.WebLoginUrl;
@@ -53,13 +63,14 @@ namespace MaxAdsl_PP_Net
             client.Headers.Add(HttpRequestHeader.UserAgent, ConfigurationManager.AppSettings["emulate_user_agent"]);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCheckTraffic_Click(object sender, EventArgs e)
         {
             NameValueCollection webLoginCredidentials = GetLoginTokens();
-            webLoginCredidentials.Add(webUsernameFieldName, txtUsername.Text);
-            webLoginCredidentials.Add(webPasswordFieldName, txtPassword.Text);
+            webLoginCredidentials.Add(webUsernameFieldName, userSettings.Username);
+            webLoginCredidentials.Add(webPasswordFieldName, userSettings.Password);
 
-            string serviceId = LoginAndGetServiceId(webLoginCredidentials);
+            if (serviceId == null)
+                serviceId = LoginAndGetServiceId(webLoginCredidentials);
 
             TrafficInfo trafficInfo = GetTrafficInfo(serviceId);
 
@@ -67,6 +78,14 @@ namespace MaxAdsl_PP_Net
             lblResponse.Text += "U:" + trafficInfo.Uploaded + Environment.NewLine;
             lblResponse.Text += "T:" + trafficInfo.Total + Environment.NewLine;
 
+        }
+
+        private void btnSaveSettings_Click(object sender, EventArgs e)
+        {
+            userSettings.Username = txtUsername.Text;
+            userSettings.Password = txtPassword.Text;
+            userSettings.StoreSettings();
+            MessageBox.Show("Settings saved.");
         }
 
         private string LoginAndGetServiceId(NameValueCollection webLoginCredidentials)
