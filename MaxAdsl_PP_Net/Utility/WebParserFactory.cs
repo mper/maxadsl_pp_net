@@ -10,7 +10,7 @@ namespace MaxAdsl_PP_Net.Utility
         public enum WebParserTypes
         {
             Full,
-            //Mobile
+            Mobile
         }
 
         public static WebParser GetWebParser(WebParserTypes type){
@@ -19,8 +19,8 @@ namespace MaxAdsl_PP_Net.Utility
                 default:
                 case WebParserTypes.Full:
                     return new WebParser();
-                //case WebParserTypes.Mobile:
-                //    return new WebParserMobile();
+                case WebParserTypes.Mobile:
+                    return new WebParserMobile();
             }
         }
     }

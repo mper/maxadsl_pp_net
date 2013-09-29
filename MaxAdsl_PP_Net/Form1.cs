@@ -39,7 +39,7 @@ namespace MaxAdsl_PP_Net
         {
             if (webParser == null)
                 webParser = Utility.WebParserFactory.GetWebParser(userSettings.UseWebParser);
-
+            
             NameValueCollection webLoginCredidentials = webParser.GetLoginTokens();
             webLoginCredidentials.Add(webUsernameFieldName, userSettings.Username);
             webLoginCredidentials.Add(webPasswordFieldName, userSettings.Password);

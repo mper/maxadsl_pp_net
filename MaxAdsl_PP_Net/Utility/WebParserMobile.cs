@@ -15,11 +15,11 @@ namespace MaxAdsl_PP_Net.Utility
         private string webStartUrl = Properties.Settings.Default.WebMobileStartUrl;
         private string webLoginUrl = Properties.Settings.Default.WebLoginUrl;
         private string webTrafficUrl = Properties.Settings.Default.WebMobileTraficUrl;
-
+        
 
         public WebParserMobile() : base() { }
         
-        public TrafficInfo GetTrafficInfo(string serviceId)
+        public override TrafficInfo GetTrafficInfo(string serviceId)
         {
             string webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
             WaitTrafficInfoReady(serviceId, ref webResponse);

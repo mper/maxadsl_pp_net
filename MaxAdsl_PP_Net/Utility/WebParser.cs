@@ -12,12 +12,11 @@ namespace MaxAdsl_PP_Net.Utility
 {
     class WebParser
     {
-
         private string webStartUrl = Properties.Settings.Default.WebStartUrl;
         private string webLoginUrl = Properties.Settings.Default.WebLoginUrl;
         private string webTrafficUrl = Properties.Settings.Default.WebTrafficUrl;
         
-        public WebClient WebClient { get; set; }
+        public virtual WebClient WebClient { get; set; }
 
         public WebParser()
         {
@@ -28,7 +27,7 @@ namespace MaxAdsl_PP_Net.Utility
             WebClient.Headers.Add(HttpRequestHeader.UserAgent, Properties.Settings.Default.EmulateUserAgent);
         }
 
-        public string LoginAndGetServiceId(NameValueCollection webLoginCredidentials)
+        public virtual string LoginAndGetServiceId(NameValueCollection webLoginCredidentials)
         {
             byte[] loginRawResponse = WebClient.UploadValues(webLoginUrl, "POST", webLoginCredidentials);
             string webResponse = Encoding.UTF8.GetString(loginRawResponse);
@@ -38,7 +37,7 @@ namespace MaxAdsl_PP_Net.Utility
             return serviceId;
         }
 
-        public NameValueCollection GetLoginTokens()
+        public virtual NameValueCollection GetLoginTokens()
         {
             string webResponse = WebClient.DownloadString(webStartUrl);
             string login_token = Regex.Match(webResponse,
@@ -55,7 +54,7 @@ namespace MaxAdsl_PP_Net.Utility
             return webLoginTokens;
         }
 
-        public TrafficInfo GetTrafficInfo(string serviceId)
+        public virtual TrafficInfo GetTrafficInfo(string serviceId)
         {
             string webResponse = WebClient.DownloadString(webTrafficUrl + serviceId); 
             WaitTrafficInfoReady(serviceId, ref webResponse);
@@ -78,7 +77,7 @@ namespace MaxAdsl_PP_Net.Utility
             return retVal;
         }
 
-        protected void WaitTrafficInfoReady(string serviceId, ref string webResponse)
+        protected virtual void WaitTrafficInfoReady(string serviceId, ref string webResponse)
         {
             if (webResponse.Contains("UÄŤitavam podatke"))
             {
@@ -89,7 +88,7 @@ namespace MaxAdsl_PP_Net.Utility
             }
         }
 
-        protected void CheckTrafficInfoReady(string pageId, string serviceIdToken)
+        protected virtual void CheckTrafficInfoReady(string pageId, string serviceIdToken)
         {
 
             string verifierUrl = "https://moj.hrvatskitelekom.hr/App_Modules__SnT.THTCms.CSC.Modules.Package__SnT.THTCms.CSC.Modules.Profile.MojTProfileService.asmx/VerifyService";
