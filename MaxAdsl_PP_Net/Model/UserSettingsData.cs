@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaxAdsl_PP_Net.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,12 +14,21 @@ namespace MaxAdsl_PP_Net.Model
         public string Username { get; set; }
         public string Password { get; set; }
 
-        private static UserSettingsData instance = null;
+        private WebParserFactory.WebParserTypes useWebParser = WebParserFactory.WebParserTypes.Full;
+        public WebParserFactory.WebParserTypes UseWebParser 
+        {
+            get { return useWebParser; }
+            set { useWebParser = value; }
+        }
         
+
+        private static UserSettingsData instance = null;
+        private UserSettingsData() { }
         public static UserSettingsData GetUserSettingsInstance()
         {
             if (instance == null)
                 LoadSettings();
+
             return instance;
         }
 

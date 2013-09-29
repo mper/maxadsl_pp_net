@@ -33,12 +33,14 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabTraffic = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.lblWebParserType = new System.Windows.Forms.Label();
+            this.cboWebType = new System.Windows.Forms.ComboBox();
+            this.lblSettingsResponse = new System.Windows.Forms.Label();
             this.lblUsername = new System.Windows.Forms.Label();
             this.btnSaveSettings = new System.Windows.Forms.Button();
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
-            this.lblSettingsResponse = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabTraffic.SuspendLayout();
             this.tabSettings.SuspendLayout();
@@ -88,6 +90,8 @@
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.lblWebParserType);
+            this.tabSettings.Controls.Add(this.cboWebType);
             this.tabSettings.Controls.Add(this.lblSettingsResponse);
             this.tabSettings.Controls.Add(this.lblUsername);
             this.tabSettings.Controls.Add(this.btnSaveSettings);
@@ -102,14 +106,42 @@
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
+            // lblWebParserType
+            // 
+            this.lblWebParserType.AutoSize = true;
+            this.lblWebParserType.Location = new System.Drawing.Point(8, 62);
+            this.lblWebParserType.Name = "lblWebParserType";
+            this.lblWebParserType.Size = new System.Drawing.Size(102, 13);
+            this.lblWebParserType.TabIndex = 14;
+            this.lblWebParserType.Text = "Data from web type:";
+            // 
+            // cboWebType
+            // 
+            this.cboWebType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboWebType.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cboWebType.FormattingEnabled = true;
+            this.cboWebType.Location = new System.Drawing.Point(116, 59);
+            this.cboWebType.Name = "cboWebType";
+            this.cboWebType.Size = new System.Drawing.Size(100, 21);
+            this.cboWebType.TabIndex = 13;
+            // 
+            // lblSettingsResponse
+            // 
+            this.lblSettingsResponse.AutoSize = true;
+            this.lblSettingsResponse.Location = new System.Drawing.Point(8, 210);
+            this.lblSettingsResponse.Name = "lblSettingsResponse";
+            this.lblSettingsResponse.Size = new System.Drawing.Size(103, 13);
+            this.lblSettingsResponse.TabIndex = 12;
+            this.lblSettingsResponse.Text = "lblSettingsResponse";
+            // 
             // lblUsername
             // 
             this.lblUsername.AutoSize = true;
-            this.lblUsername.Location = new System.Drawing.Point(6, 9);
+            this.lblUsername.Location = new System.Drawing.Point(8, 9);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(18, 13);
+            this.lblUsername.Size = new System.Drawing.Size(58, 13);
             this.lblUsername.TabIndex = 8;
-            this.lblUsername.Text = "U:";
+            this.lblUsername.Text = "Username:";
             // 
             // btnSaveSettings
             // 
@@ -123,7 +155,7 @@
             // 
             // txtUsername
             // 
-            this.txtUsername.Location = new System.Drawing.Point(30, 6);
+            this.txtUsername.Location = new System.Drawing.Point(116, 6);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(100, 20);
             this.txtUsername.TabIndex = 7;
@@ -131,27 +163,19 @@
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(136, 9);
+            this.lblPassword.Location = new System.Drawing.Point(8, 35);
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(17, 13);
+            this.lblPassword.Size = new System.Drawing.Size(56, 13);
             this.lblPassword.TabIndex = 10;
-            this.lblPassword.Text = "P:";
+            this.lblPassword.Text = "Password:";
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(159, 6);
+            this.txtPassword.Location = new System.Drawing.Point(116, 32);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(100, 20);
             this.txtPassword.TabIndex = 9;
-            // 
-            // lblSettingsResponse
-            // 
-            this.lblSettingsResponse.AutoSize = true;
-            this.lblSettingsResponse.Location = new System.Drawing.Point(8, 210);
-            this.lblSettingsResponse.Name = "lblSettingsResponse";
-            this.lblSettingsResponse.Size = new System.Drawing.Size(103, 13);
-            this.lblSettingsResponse.TabIndex = 12;
-            this.lblSettingsResponse.Text = "lblSettingsResponse";
+            this.txtPassword.UseSystemPasswordChar = true;
             // 
             // Form1
             // 
@@ -183,6 +207,8 @@
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Label lblSettingsResponse;
+        private System.Windows.Forms.Label lblWebParserType;
+        private System.Windows.Forms.ComboBox cboWebType;
     }
 }
 

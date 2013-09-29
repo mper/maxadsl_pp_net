@@ -51,6 +51,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\TrafficInfo.cs" />
     <Compile Include="Model\UserSettingsData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,6 +60,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Utility\Tools.cs" />
+    <Compile Include="Utility\WebParserMobile.cs" />
+    <Compile Include="Utility\WebParser.cs" />
+    <Compile Include="Utility\WebParserFactory.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
