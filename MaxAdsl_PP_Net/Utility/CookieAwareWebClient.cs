@@ -18,16 +18,18 @@ namespace MaxAdsl_PP_Net.Utility
         }
 
         public CookieContainer CookieContainer { get; set; }
-
-        protected override WebRequest GetWebRequest(Uri address)
+        
+        private Dictionary<string, string> reqHeaderValues = new Dictionary<string, string>();
+        public Dictionary<string, string> RequestHeaderValues
         {
-            WebRequest request = base.GetWebRequest(address);
-            if (request != null)
+            get { return reqHeaderValues; }
+            set
             {
-                ((HttpWebRequest)request).CookieContainer = this.CookieContainer;
+                if (value == null)
+                    reqHeaderValues = new Dictionary<string, string>();
+                else
+                    reqHeaderValues = value;
             }
-
-            return request;
         }
 
         public override string ToString()
@@ -61,6 +63,20 @@ namespace MaxAdsl_PP_Net.Utility
                 }
             }
             return sb.ToString();
+        }
+
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            WebRequest request = base.GetWebRequest(address);
+            if (request != null)
+            {
+                ((HttpWebRequest)request).CookieContainer = this.CookieContainer;
+
+                if (RequestHeaderValues.ContainsKey("Accept"))
+                    ((HttpWebRequest)request).Accept = RequestHeaderValues["Accept"];
+            }
+
+            return request;
         }
 
     }

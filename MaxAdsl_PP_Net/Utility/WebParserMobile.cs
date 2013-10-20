@@ -22,7 +22,7 @@ namespace MaxAdsl_PP_Net.Utility
         public override TrafficInfo GetTrafficInfo(string serviceId)
         {
             string webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
-            WaitTrafficInfoReady(serviceId, ref webResponse);
+            WaitTrafficInfoReadyWebService(serviceId, ref webResponse);
 
             string trafficData = Regex.Match(webResponse, "<div class=[\"']miData[\"']>.*?</div>", RegexOptions.Singleline)
                     .Value;
