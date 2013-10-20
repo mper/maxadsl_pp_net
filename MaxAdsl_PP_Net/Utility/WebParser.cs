@@ -12,9 +12,9 @@ namespace MaxAdsl_PP_Net.Utility
 {
     class WebParser
     {
-        private string webStartUrl = Properties.Settings.Default.WebStartUrl;
-        private string webLoginUrl = Properties.Settings.Default.WebLoginUrl;
-        private string webTrafficUrl = Properties.Settings.Default.WebTrafficUrl;
+        protected string webStartUrl = Properties.Settings.Default.WebStartUrl;
+        protected string webLoginUrl = Properties.Settings.Default.WebLoginUrl;
+        protected string webTrafficUrl = Properties.Settings.Default.WebTrafficUrl;
         
         public virtual WebClient WebClient { get; set; }
 
