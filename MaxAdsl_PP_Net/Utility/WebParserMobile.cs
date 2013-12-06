@@ -10,10 +10,10 @@ using System.Text.RegularExpressions;
 
 namespace MaxAdsl_PP_Net.Utility
 {
-    class WebParserMobile : WebParser
+    class WebParserMobile : WebParserFull
     {
         public WebParserMobile() : base() { }
-        
+
         public override TrafficInfo GetTrafficInfo(string serviceId)
         {
             string webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);

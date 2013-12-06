@@ -13,6 +13,7 @@ namespace MaxAdsl_PP_Net.Model
     {
         public string Username { get; set; }
         public string Password { get; set; }
+        public bool CheckTrafficOnStartup { get; set; }
 
         private WebParserFactory.WebParserTypes useWebParser = WebParserFactory.WebParserTypes.Full;
         public WebParserFactory.WebParserTypes UseWebParser 

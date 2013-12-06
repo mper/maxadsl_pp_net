@@ -13,12 +13,12 @@ namespace MaxAdsl_PP_Net.Utility
             Mobile
         }
 
-        public static WebParser GetWebParser(WebParserTypes type){
+        public static IWebParser GetWebParser(WebParserTypes type){
             switch (type)
             {
                 default:
                 case WebParserTypes.Full:
-                    return new WebParser();
+                    return new WebParserFull();
                 case WebParserTypes.Mobile:
                     return new WebParserMobile();
             }

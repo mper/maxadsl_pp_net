@@ -1,6 +1,6 @@
 ﻿namespace MaxAdsl_PP_Net
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -33,6 +33,8 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabTraffic = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.lblCheckTrafficOnStartup = new System.Windows.Forms.Label();
+            this.cboCheckTrafficOnStartup = new System.Windows.Forms.CheckBox();
             this.lblWebParserType = new System.Windows.Forms.Label();
             this.cboWebType = new System.Windows.Forms.ComboBox();
             this.lblSettingsResponse = new System.Windows.Forms.Label();
@@ -41,6 +43,7 @@
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
+            this.bgwCheckTraffic = new System.ComponentModel.BackgroundWorker();
             this.tabControl1.SuspendLayout();
             this.tabTraffic.SuspendLayout();
             this.tabSettings.SuspendLayout();
@@ -90,6 +93,8 @@
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.lblCheckTrafficOnStartup);
+            this.tabSettings.Controls.Add(this.cboCheckTrafficOnStartup);
             this.tabSettings.Controls.Add(this.lblWebParserType);
             this.tabSettings.Controls.Add(this.cboWebType);
             this.tabSettings.Controls.Add(this.lblSettingsResponse);
@@ -105,6 +110,25 @@
             this.tabSettings.TabIndex = 1;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // lblCheckTrafficOnStartup
+            // 
+            this.lblCheckTrafficOnStartup.AutoSize = true;
+            this.lblCheckTrafficOnStartup.Location = new System.Drawing.Point(6, 89);
+            this.lblCheckTrafficOnStartup.Name = "lblCheckTrafficOnStartup";
+            this.lblCheckTrafficOnStartup.Size = new System.Drawing.Size(91, 13);
+            this.lblCheckTrafficOnStartup.TabIndex = 16;
+            this.lblCheckTrafficOnStartup.Text = "Check on startup:";
+            // 
+            // cboCheckTrafficOnStartup
+            // 
+            this.cboCheckTrafficOnStartup.AutoSize = true;
+            this.cboCheckTrafficOnStartup.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cboCheckTrafficOnStartup.Location = new System.Drawing.Point(116, 89);
+            this.cboCheckTrafficOnStartup.Name = "cboCheckTrafficOnStartup";
+            this.cboCheckTrafficOnStartup.Size = new System.Drawing.Size(15, 14);
+            this.cboCheckTrafficOnStartup.TabIndex = 15;
+            this.cboCheckTrafficOnStartup.UseVisualStyleBackColor = true;
             // 
             // lblWebParserType
             // 
@@ -177,13 +201,21 @@
             this.txtPassword.TabIndex = 9;
             this.txtPassword.UseSystemPasswordChar = true;
             // 
-            // Form1
+            // bgwCheckTraffic
+            // 
+            this.bgwCheckTraffic.WorkerReportsProgress = true;
+            this.bgwCheckTraffic.WorkerSupportsCancellation = true;
+            this.bgwCheckTraffic.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwCheckTraffic_DoWork);
+            this.bgwCheckTraffic.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwCheckTraffic_ProgressChanged);
+            this.bgwCheckTraffic.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwCheckTraffic_RunWorkerCompleted);
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(511, 262);
             this.Controls.Add(this.tabControl1);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
             this.tabControl1.ResumeLayout(false);
             this.tabTraffic.ResumeLayout(false);
@@ -209,6 +241,9 @@
         private System.Windows.Forms.Label lblSettingsResponse;
         private System.Windows.Forms.Label lblWebParserType;
         private System.Windows.Forms.ComboBox cboWebType;
+        private System.Windows.Forms.Label lblCheckTrafficOnStartup;
+        private System.Windows.Forms.CheckBox cboCheckTrafficOnStartup;
+        private System.ComponentModel.BackgroundWorker bgwCheckTraffic;
     }
 }
 

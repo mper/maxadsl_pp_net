@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace MaxAdsl_PP_Net.Utility
 {
-    class WebParser
+    class WebParserFull : MaxAdsl_PP_Net.Utility.IWebParser
     {
         protected string webStartUrl = Properties.Settings.Default.WebStartUrl;
         protected string webLoginUrl = Properties.Settings.Default.WebLoginUrl;
@@ -18,7 +18,7 @@ namespace MaxAdsl_PP_Net.Utility
         
         public virtual WebClient WebClient { get; set; }
 
-        public WebParser()
+        public WebParserFull()
         {
             WebClient = new CookieAwareWebClient();
             WebClient.Encoding = Encoding.UTF8;
@@ -88,11 +88,14 @@ namespace MaxAdsl_PP_Net.Utility
         {
             do
             {
+                //appendResponseLabelMethod(" Not ready")
                 System.Threading.Thread.Sleep(2000);
+                //responseLabel.Text += "Getting traffic info...";
                 webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
             } while (webResponse.Contains("Učitavam podatke"));
         }
 
+        // This method is not yet used...
         protected virtual void WaitTrafficInfoReadyWebService(string serviceId, ref string webResponse)
         {
             string pageId = Regex.Match(webResponse, "(<form.*?requestedPageId=)(\\d*?)([\"'].*?>)").Groups[2].Value;
@@ -138,6 +141,7 @@ namespace MaxAdsl_PP_Net.Utility
                 System.Threading.Thread.Sleep(1000);
                 byte[] loginRawResponse = WebClient.UploadValues(verifierUrl, "POST", verifyService);
 #if DEBUG
+                // TODO: remove response decoding, for debugging purposes only
                 webResponse = Encoding.UTF8.GetString(loginRawResponse);
 #endif
                 //if(client.ResponseHeaders["Content-Length"] == "10")

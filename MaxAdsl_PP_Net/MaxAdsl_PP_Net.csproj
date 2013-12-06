@@ -75,11 +75,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\TrafficInfo.cs" />
     <Compile Include="Model\UserSettingsData.cs" />
@@ -89,12 +89,13 @@
     <Compile Include="Utility\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Utility\IWebParser.cs" />
     <Compile Include="Utility\Tools.cs" />
     <Compile Include="Utility\WebParserMobile.cs" />
-    <Compile Include="Utility\WebParser.cs" />
+    <Compile Include="Utility\WebParserFull.cs" />
     <Compile Include="Utility\WebParserFactory.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
