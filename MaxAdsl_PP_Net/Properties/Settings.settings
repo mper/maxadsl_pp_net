@@ -2,17 +2,18 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MaxAdsl_PP_Net.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="EmulateUserAgent" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36</Value>
+    <Setting Name="MockStartUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:3512/Home/Start</Value>
     </Setting>
-    <Setting Name="DummyLoginUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://localhost/DummyHtWeb/Account/Login</Value>
+    <Setting Name="MockLoginUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:3512/Home/Login</Value>
     </Setting>
-    <Setting Name="DummyTrafficUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://localhost/DummyHtWeb/Secured</Value>
+    <Setting Name="MockTrafficUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:3512/Home/Traffic</Value>
     </Setting>
-    <Setting Name="WebMobileStartUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://m.moj.hrvatskitelekom.hr</Value>
+
+    <Setting Name="WebStartUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://moj.hrvatskitelekom.hr</Value>
     </Setting>
     <Setting Name="WebLoginUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://servisi.tportal.hr/servisi/rest/oauth1/clientprocess</Value>
@@ -20,17 +21,22 @@
     <Setting Name="WebTrafficUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://moj.hrvatskitelekom.hr/internet/ispis-spajanja?serviceid=</Value>
     </Setting>
-    <Setting Name="WebStartUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://moj.hrvatskitelekom.hr</Value>
+
+    <Setting Name="WebMobileStartUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://m.moj.hrvatskitelekom.hr</Value>
+    </Setting>
+    <Setting Name="WebMobileTraficUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://m.moj.hrvatskitelekom.hr/internet/pregled?serviceid=</Value>
+    </Setting>
+
+    <Setting Name="EmulateUserAgent" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36</Value>
     </Setting>
     <Setting Name="WebLoginUsernameFieldName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">username</Value>
     </Setting>
     <Setting Name="WebLoginPasswordFieldName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">password</Value>
-    </Setting>
-    <Setting Name="WebMobileTraficUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://m.moj.hrvatskitelekom.hr/internet/pregled?serviceid=</Value>
     </Setting>
     <Setting Name="UnmodifiedPasswordDefinition" Type="System.String" Scope="Application">
       <Value Profile="(Default)">unmodified</Value>

@@ -12,11 +12,8 @@ namespace MaxAdsl_PP_Net.Utility
 {
     class WebParserFull : MaxAdsl_PP_Net.Utility.WebParser
     {
-        protected string webStartUrl = Properties.Settings.Default.WebStartUrl;
-        protected string webLoginUrl = Properties.Settings.Default.WebLoginUrl;
-        protected string webTrafficUrl = Properties.Settings.Default.WebTrafficUrl;
         
-        public WebParserFull()
+        public WebParserFull() : base()
         {
             WebClient = new CookieAwareWebClient();
             WebClient.Encoding = Encoding.UTF8;
