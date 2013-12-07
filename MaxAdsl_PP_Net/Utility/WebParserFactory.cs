@@ -13,7 +13,7 @@ namespace MaxAdsl_PP_Net.Utility
             Mobile
         }
 
-        public static IWebParser GetWebParser(WebParserTypes type){
+        public static WebParser GetWebParser(WebParserTypes type){
             switch (type)
             {
                 default:

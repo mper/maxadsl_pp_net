@@ -89,7 +89,7 @@
     <Compile Include="Utility\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Utility\IWebParser.cs" />
+    <Compile Include="Utility\WebParser.cs" />
     <Compile Include="Utility\Tools.cs" />
     <Compile Include="Utility\WebParserMobile.cs" />
     <Compile Include="Utility\WebParserFull.cs" />

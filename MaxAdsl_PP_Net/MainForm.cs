@@ -10,16 +10,14 @@ namespace MaxAdsl_PP_Net
 {
     public partial class MainForm : Form
     {
-
         private string webUsernameFieldName = Properties.Settings.Default.WebLoginUsernameFieldName;
         private string webPasswordFieldName = Properties.Settings.Default.WebLoginPasswordFieldName;
-        private Utility.IWebParser webParser;
+        private Utility.WebParser webParser;
         private Model.UserSettingsData userSettings;
         
         private string serviceId;
         private NameValueCollection webLoginCredidentials;
         private TrafficInfo trafficInfo;
-
         public MainForm()
         {
             InitializeComponent();
@@ -33,15 +31,27 @@ namespace MaxAdsl_PP_Net
             txtPassword.Text = Properties.Settings.Default.UnmodifiedPasswordDefinition;
             cboWebType.SelectedItem = userSettings.UseWebParser;
             cboCheckTrafficOnStartup.Checked = userSettings.CheckTrafficOnStartup;
+        }
 
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
             if (userSettings.CheckTrafficOnStartup)
                 bgwCheckTraffic.RunWorkerAsync();
-
         }
 
         private void btnCheckTraffic_Click(object sender, EventArgs e)
         {
-            bgwCheckTraffic.RunWorkerAsync();
+            if (bgwCheckTraffic.IsBusy)
+            {
+                bgwCheckTraffic.CancelAsync();
+                webParser.AbortAction = true;
+                btnCheckTraffic.Enabled = false;
+            }
+            else
+            {
+                webParser.AbortAction = false;
+                bgwCheckTraffic.RunWorkerAsync();
+            }
         }
 
         private void btnSaveSettings_Click(object sender, EventArgs e)
@@ -59,31 +69,50 @@ namespace MaxAdsl_PP_Net
         private void bgwCheckTraffic_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             btnCheckTraffic.Invoke((MethodInvoker)delegate { btnCheckTraffic.Text = "Cancel"; });
-
             if (webParser == null)
+            {
                 webParser = Utility.WebParserFactory.GetWebParser(userSettings.UseWebParser);
+                webParser.ActionStart += delegate(object evSender, WebParser.ActionEventArgs evArgs)
+                {
+                    appendResponseLabelText(evArgs.Message, false);
+                };
+                webParser.ActionEnd += delegate(object evSender, WebParser.ActionEventArgs evArgs)
+                {
+                    appendResponseLabelText(evArgs.Message, true);
+                };
+            }
 
-            setResponseLabelText("Checking traffic..." + Environment.NewLine);
+            setResponseLabelText("Checking traffic...", true);
+            if (bgwCheckTraffic.CancellationPending)
+            {
+                appendResponseLabelText(" Aborted", true);
+                e.Cancel = true;
+                return;
+            }
 
             if (webLoginCredidentials == null)
             {
-                appendResponseLabelText("Getting login tokens...");
                 webLoginCredidentials = webParser.GetLoginTokens();
-                appendResponseLabelText(" OK" + Environment.NewLine);
                 webLoginCredidentials.Add(webUsernameFieldName, userSettings.Username);
                 webLoginCredidentials.Add(webPasswordFieldName, userSettings.Password);
             }
 
-            if (serviceId == null)
+            if (bgwCheckTraffic.CancellationPending)
             {
-                appendResponseLabelText("Getting service id...");
-                serviceId = webParser.LoginAndGetServiceId(webLoginCredidentials);
-                appendResponseLabelText(" OK" + Environment.NewLine);
+                appendResponseLabelText(" Aborted", true);
+                e.Cancel = true;
+                return;
             }
+            if (serviceId == null)
+                serviceId = webParser.LoginAndGetServiceId(webLoginCredidentials);
 
-            appendResponseLabelText("Getting traffic info...");
+            if (bgwCheckTraffic.CancellationPending)
+            {
+                appendResponseLabelText(" Aborted", true);
+                e.Cancel = true;
+                return;
+            }
             trafficInfo = webParser.GetTrafficInfo(serviceId);
-            appendResponseLabelText(" OK" + Environment.NewLine);
         }
 
         private void bgwCheckTraffic_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -94,20 +123,31 @@ namespace MaxAdsl_PP_Net
         private void bgwCheckTraffic_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             btnCheckTraffic.Text = "Check";
-            lblResponse.Text += "D:" + trafficInfo.Downloaded + Environment.NewLine;
-            lblResponse.Text += "U:" + trafficInfo.Uploaded + Environment.NewLine;
-            lblResponse.Text += "T:" + trafficInfo.Total + Environment.NewLine;
+            btnCheckTraffic.Enabled = true;
+            if (trafficInfo != null)
+            {
+                lblResponse.Text += "D:" + trafficInfo.Downloaded + Environment.NewLine;
+                lblResponse.Text += "U:" + trafficInfo.Uploaded + Environment.NewLine;
+                lblResponse.Text += "T:" + trafficInfo.Total + Environment.NewLine;
+            }
         }
 
-        private void setResponseLabelText(string message)
+        // ----------------- Helper methods ----------------------
+
+        private void setResponseLabelText(string message, bool endLine)
         {
+            if (endLine)
+                message += Environment.NewLine;
             lblResponse.Invoke((MethodInvoker)delegate() { lblResponse.Text = message; });
         }
 
-        private void appendResponseLabelText(string message)
+        private void appendResponseLabelText(string message, bool endLine)
         {
+            if (endLine)
+                message += Environment.NewLine;
             lblResponse.Invoke((MethodInvoker)delegate() { lblResponse.Text += message; });
         }
 
+        
     }
 }
