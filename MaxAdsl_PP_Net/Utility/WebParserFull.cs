@@ -35,10 +35,10 @@ namespace MaxAdsl_PP_Net.Utility
 
             string webResponse = WebClient.DownloadString(webStartUrl);
             string login_token = Regex.Match(webResponse,
-                    "(<input [^>]* name=[\"']login_token[\"'] [^>]* value=[\"'])([a-zA-Z0-9]+)([\"'])")
+                    "(<input [^>]*name=[\"']login_token[\"'] [^>]*value=[\"'])([a-zA-Z0-9]+)([\"'])")
                     .Groups[2].Value;
             string ssoSignature = Regex.Match(webResponse,
-                    "(<input [^>]* name=[\"']ssoSignature[\"'] [^>]* value=[\"'])([a-zA-Z0-9]+)([\"'])")
+                    "(<input [^>]*name=[\"']ssoSignature[\"'] [^>]*value=[\"'])([a-zA-Z0-9]+)([\"'])")
                     .Groups[2].Value;
 
             NameValueCollection webLoginTokens = new NameValueCollection(){
@@ -62,7 +62,7 @@ namespace MaxAdsl_PP_Net.Utility
             byte[] loginRawResponse = WebClient.UploadValues(webLoginUrl, "POST", webLoginCredidentials);
             string webResponse = Encoding.UTF8.GetString(loginRawResponse);
             string serviceId = Regex.Match(webResponse,
-                    "(<a [^>]*? href=[\"']/internet/ispis-spajanja\\?serviceid=)(\\d+)([\"'])")
+                    "(<a [^>]*?href=[\"']/internet/ispis-spajanja\\?serviceid=)(\\d+)([\"'])")
                     .Groups[2].Value;
             OnActionEnd(new ActionEventArgs("LoginAndGetServiceId", "Done"));
             return serviceId;

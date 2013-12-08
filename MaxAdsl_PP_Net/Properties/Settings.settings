@@ -9,9 +9,8 @@
       <Value Profile="(Default)">http://localhost:3512/Home/Login</Value>
     </Setting>
     <Setting Name="MockTrafficUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost:3512/Home/Traffic</Value>
+      <Value Profile="(Default)">http://localhost:3512/Home/TrafficInfo?serviceId=</Value>
     </Setting>
-
     <Setting Name="WebStartUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://moj.hrvatskitelekom.hr</Value>
     </Setting>
@@ -21,14 +20,12 @@
     <Setting Name="WebTrafficUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://moj.hrvatskitelekom.hr/internet/ispis-spajanja?serviceid=</Value>
     </Setting>
-
     <Setting Name="WebMobileStartUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://m.moj.hrvatskitelekom.hr</Value>
     </Setting>
     <Setting Name="WebMobileTraficUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://m.moj.hrvatskitelekom.hr/internet/pregled?serviceid=</Value>
     </Setting>
-
     <Setting Name="EmulateUserAgent" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36</Value>
     </Setting>

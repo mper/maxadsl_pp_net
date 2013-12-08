@@ -3,3 +3,39 @@
 }
 
 <h2>TrafficInfo</h2>
+
+@{
+    if (Session["TrafficInfoHitCount"] == null){
+        Session["TrafficInfoHitCount"] = 0;
+    }
+    Session["TrafficInfoHitCount"] = (int)Session["TrafficInfoHitCount"] + 1;
+    
+    if((int)Session["TrafficInfoHitCount"] == 5) {
+        Session["TrafficInfoHitCount"] = 0;
+     <div>
+         <table>
+             <tr>
+                 <th>Header</th>
+             </tr>
+             <tr>
+                 <td>Ostvareno za</td>
+             </tr>
+             <tr>
+                 <td>dl:10GB</td>
+             </tr>
+             <tr>
+                 <td>ul:2GB</td>
+             </tr>
+             <tr>
+                 <td>Ukupni promet</td>
+                 <td><b>tt:12GB</b></td>
+             </tr>
+         </table>
+     </div>   
+    }
+    else{
+        <div>
+            Učitavam podatke
+        </div>
+    }
+}

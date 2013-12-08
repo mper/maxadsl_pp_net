@@ -49,6 +49,19 @@ namespace MaxAdsl_PP_Net
             }
             else
             {
+                btnCheckTraffic.Text = "Cancel";
+                if (webParser == null)
+                {
+                    webParser = Utility.WebParserFactory.GetWebParser(userSettings.UseWebParser);
+                    webParser.ActionStart += delegate(object evSender, WebParser.ActionEventArgs evArgs)
+                    {
+                        appendResponseLabelText(evArgs.Message, false);
+                    };
+                    webParser.ActionEnd += delegate(object evSender, WebParser.ActionEventArgs evArgs)
+                    {
+                        appendResponseLabelText(evArgs.Message, true);
+                    };
+                }
                 webParser.AbortAction = false;
                 bgwCheckTraffic.RunWorkerAsync();
             }
@@ -68,20 +81,6 @@ namespace MaxAdsl_PP_Net
 
         private void bgwCheckTraffic_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            btnCheckTraffic.Invoke((MethodInvoker)delegate { btnCheckTraffic.Text = "Cancel"; });
-            if (webParser == null)
-            {
-                webParser = Utility.WebParserFactory.GetWebParser(userSettings.UseWebParser);
-                webParser.ActionStart += delegate(object evSender, WebParser.ActionEventArgs evArgs)
-                {
-                    appendResponseLabelText(evArgs.Message, false);
-                };
-                webParser.ActionEnd += delegate(object evSender, WebParser.ActionEventArgs evArgs)
-                {
-                    appendResponseLabelText(evArgs.Message, true);
-                };
-            }
-
             setResponseLabelText("Checking traffic...", true);
             if (bgwCheckTraffic.CancellationPending)
             {
