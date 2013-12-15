@@ -25,7 +25,12 @@ namespace MaxAdsl_PP_Net.Utility
 
         public static byte[] DecryptData(byte[] encData)
         {
-            byte[] data = ProtectedData.Unprotect(encData, encryptionEntropy, DataProtectionScope.CurrentUser);
+            byte[] data;
+            try
+            {
+                data = ProtectedData.Unprotect(encData, encryptionEntropy, DataProtectionScope.CurrentUser);
+            }
+            catch (CryptographicException) { data = null; }
             return data;
         }
 
@@ -33,7 +38,10 @@ namespace MaxAdsl_PP_Net.Utility
         {
             T retVal;
             byte[] data = DecryptData(encData);
-            retVal = ByteArrayToObject<T>(data);
+            if (data == null)
+                retVal = default(T);
+            else
+                retVal = ByteArrayToObject<T>(data);
             return retVal;
         }
 

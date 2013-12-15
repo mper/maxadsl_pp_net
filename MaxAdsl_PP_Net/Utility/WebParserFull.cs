@@ -12,6 +12,8 @@ namespace MaxAdsl_PP_Net.Utility
 {
     class WebParserFull : MaxAdsl_PP_Net.Utility.WebParser
     {
+
+        private int checkTrafficInfoCount;
         
         public WebParserFull() : base()
         {
@@ -78,12 +80,14 @@ namespace MaxAdsl_PP_Net.Utility
                 return null;
             }
 
+            checkTrafficInfoCount = 1;
             string webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
             //webResponse = Encoding.GetEncoding(1250).GetEncoder().enc
             
             if (webResponse.Contains("Učitavam podatke"))
                 //WaitTrafficInfoReadyWebService(serviceId, ref webResponse);
                 WaitTrafficInfoReadyPage(serviceId, ref webResponse);
+
             OnActionEnd(new ActionEventArgs("GetTrafficInfo", "Done"));
 
             OnActionStart(new ActionEventArgs("GetTrafficInfo", "Parsing traffic data..."));
@@ -120,7 +124,7 @@ namespace MaxAdsl_PP_Net.Utility
                 }
 
                 OnActionEnd(new ActionEventArgs("WaitTrafficInfoReadyPage", "Not ready"));
-                System.Threading.Thread.Sleep(2000);
+                System.Threading.Thread.Sleep((3 / checkTrafficInfoCount++ + 1) * 1000);
                 OnActionStart(new ActionEventArgs("WaitTrafficInfoReadyPage", "Getting traffic info..."));
                 webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
             } while (webResponse.Contains("Učitavam podatke"));

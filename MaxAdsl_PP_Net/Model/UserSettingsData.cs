@@ -46,7 +46,7 @@ namespace MaxAdsl_PP_Net.Model
                 byte[] encSettings = File.ReadAllBytes("settings.bin");
                 instance = Utility.Tools.DecryptData<UserSettingsData>(encSettings);
             }
-            else
+            if (instance == null)
             {
                 instance = new UserSettingsData();
             }
