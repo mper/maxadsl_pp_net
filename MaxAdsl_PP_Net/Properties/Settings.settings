@@ -12,7 +12,7 @@
       <Value Profile="(Default)">http://localhost:3512/Home/TrafficInfo?serviceId=</Value>
     </Setting>
     <Setting Name="WebStartUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://moj.hrvatskitelekom.hr</Value>
+      <Value Profile="(Default)">https://moj.hrvatskitelekom.hr/SSO/Prijava</Value>
     </Setting>
     <Setting Name="WebLoginUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://servisi.tportal.hr/servisi/rest/oauth1/clientprocess</Value>

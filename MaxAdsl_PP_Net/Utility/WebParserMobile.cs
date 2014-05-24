@@ -14,7 +14,7 @@ namespace MaxAdsl_PP_Net.Utility
     {
         public WebParserMobile() : base() { }
 
-        public override TrafficInfo GetTrafficInfo(string serviceId)
+        public override TrafficInfo GetTrafficInfoStep(string serviceId)
         {
             string webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
             WaitTrafficInfoReadyWebService(serviceId, ref webResponse);

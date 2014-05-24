@@ -1,6 +1,7 @@
 ﻿using MaxAdsl_PP_Net.Model;
 using MaxAdsl_PP_Net.Utility;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Net;
@@ -10,14 +11,9 @@ namespace MaxAdsl_PP_Net
 {
     public partial class MainForm : Form
     {
-        private string webUsernameFieldName = Properties.Settings.Default.WebLoginUsernameFieldName;
-        private string webPasswordFieldName = Properties.Settings.Default.WebLoginPasswordFieldName;
         private Utility.WebParser webParser;
         private Model.UserSettingsData userSettings;
         
-        private string serviceId;
-        private NameValueCollection webLoginCredidentials;
-        private TrafficInfo trafficInfo;
         public MainForm()
         {
             InitializeComponent();
@@ -36,21 +32,19 @@ namespace MaxAdsl_PP_Net
         private void MainForm_Shown(object sender, EventArgs e)
         {
             if (userSettings.CheckTrafficOnStartup)
-                bgwCheckTraffic.RunWorkerAsync();
+                checkTraffic();
         }
 
         private void btnCheckTraffic_Click(object sender, EventArgs e)
         {
-            if (bgwCheckTraffic.IsBusy)
+            if (webParser != null && webParser.IsRunning)
             {
-                bgwCheckTraffic.CancelAsync();
                 webParser.AbortAction = true;
                 btnCheckTraffic.Enabled = false;
             }
             else
             {
-                btnCheckTraffic.Text = "Cancel";
-                bgwCheckTraffic.RunWorkerAsync();
+                checkTraffic();
             }
         }
 
@@ -66,6 +60,7 @@ namespace MaxAdsl_PP_Net
             MessageBox.Show("Settings saved.");
         }
 
+        /*
         private void bgwCheckTraffic_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             setResponseLabelText("Checking traffic...", true);
@@ -90,11 +85,11 @@ namespace MaxAdsl_PP_Net
             }
             webParser.AbortAction = false;
 
-            if (webLoginCredidentials == null)
+            if (webLoginCredentials == null)
             {
-                webLoginCredidentials = webParser.GetLoginTokens();
-                webLoginCredidentials.Add(webUsernameFieldName, userSettings.Username);
-                webLoginCredidentials.Add(webPasswordFieldName, userSettings.Password);
+                webLoginCredentials = webParser.GetLoginTokensStep();
+                webLoginCredentials.Add(webUsernameFieldName, userSettings.Username);
+                webLoginCredentials.Add(webPasswordFieldName, userSettings.Password);
             }
 
             if (bgwCheckTraffic.CancellationPending)
@@ -104,7 +99,7 @@ namespace MaxAdsl_PP_Net
                 return;
             }
             if (serviceId == null)
-                serviceId = webParser.LoginAndGetServiceId(webLoginCredidentials);
+                serviceId = webParser.LoginAndGetServiceIdStep(webLoginCredentials);
 
             if (bgwCheckTraffic.CancellationPending)
             {
@@ -112,27 +107,42 @@ namespace MaxAdsl_PP_Net
                 e.Cancel = true;
                 return;
             }
-            trafficInfo = webParser.GetTrafficInfo(serviceId);
+            trafficInfo = webParser.GetTrafficInfoStep(serviceId);
         }
+         */
 
-        private void bgwCheckTraffic_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
-        {
-            
-        }
-
-        private void bgwCheckTraffic_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
-        {
-            btnCheckTraffic.Text = "Check";
-            btnCheckTraffic.Enabled = true;
-            if (trafficInfo != null)
-            {
-                lblResponse.Text += "D:" + trafficInfo.Downloaded + Environment.NewLine;
-                lblResponse.Text += "U:" + trafficInfo.Uploaded + Environment.NewLine;
-                lblResponse.Text += "T:" + trafficInfo.Total + Environment.NewLine;
-            }
-        }
 
         // ----------------- Helper methods ----------------------
+
+        private void checkTraffic()
+        {
+            btnCheckTraffic.Text = "Cancel";
+            setResponseLabelText("Checking traffic...", true);
+
+            if (webParser == null)
+            {
+                webParser = Utility.WebParserFactory.GetWebParser(userSettings.UseWebParser);
+                webParser.OnActionStart += delegate(object sender, WebParser.ActionEventArgs args)
+                {
+                    appendResponseLabelText(args.Message, false);
+                };
+                webParser.OnActionEnd += delegate(object sender, WebParser.ActionEventArgs args)
+                {
+                    appendResponseLabelText(args.Message, true);
+                };
+                webParser.OnTrafficInfoComplete += delegate(object sender, WebParser.TrafficInfoEventArgs args)
+                {
+                    lblResponse.Invoke((MethodInvoker)delegate()
+                    {
+                        btnCheckTraffic.Text = "Check";
+                        btnCheckTraffic.Enabled = true;
+                        appendTrafficInfo(args.TrafficInfo);
+                    });
+                };
+            }
+
+            webParser.GetTrafficInfoAsync(userSettings.Username, userSettings.Password);
+        }
 
         private void setResponseLabelText(string message, bool endLine)
         {
@@ -146,6 +156,16 @@ namespace MaxAdsl_PP_Net
             if (endLine)
                 message += Environment.NewLine;
             lblResponse.Invoke((MethodInvoker)delegate() { lblResponse.Text += message; });
+        }
+
+        private void appendTrafficInfo(TrafficInfo trafficInfo)
+        {
+            if (trafficInfo != null)
+            {
+                    lblResponse.Text += "D:" + trafficInfo.Downloaded + Environment.NewLine;
+                    lblResponse.Text += "U:" + trafficInfo.Uploaded + Environment.NewLine;
+                    lblResponse.Text += "T:" + trafficInfo.Total + Environment.NewLine;
+            }
         }
 
         

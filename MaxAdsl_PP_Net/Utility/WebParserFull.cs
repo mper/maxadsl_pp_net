@@ -25,12 +25,12 @@ namespace MaxAdsl_PP_Net.Utility
             WebClient.Headers.Add(HttpRequestHeader.UserAgent, Properties.Settings.Default.EmulateUserAgent);
         }
 
-        public override NameValueCollection GetLoginTokens()
+        public override NameValueCollection GetLoginTokensStep()
         {
-            OnActionStart(new ActionEventArgs("GetLoginTokens", "Getting login tokens..."));
+            ActionStartEvent(new ActionEventArgs("GetLoginTokens", "Getting login tokens..."));
             if (AbortAction)
             {
-                OnActionEnd(new ActionEventArgs("GetLoginTokens", "Aborted"));
+                ActionEndEvent(new ActionEventArgs("GetLoginTokens", "Aborted"));
                 AbortAction = false;
                 return null;
             }
@@ -47,35 +47,35 @@ namespace MaxAdsl_PP_Net.Utility
                 {"login_token", login_token},
                 {"ssoSignature", ssoSignature}
             };
-            OnActionEnd(new ActionEventArgs("GetLoginTokens", "Done"));
+            ActionEndEvent(new ActionEventArgs("GetLoginTokens", "Done"));
             return webLoginTokens;
         }
 
-        public override string LoginAndGetServiceId(NameValueCollection webLoginCredidentials)
+        public override string LoginAndGetServiceIdStep(NameValueCollection webLoginCredentials)
         {
-            OnActionStart(new ActionEventArgs("LoginAndGetServiceId", "Logging in and getting service id..."));
+            ActionStartEvent(new ActionEventArgs("LoginAndGetServiceId", "Logging in and getting service id..."));
             if (AbortAction)
             {
-                OnActionEnd(new ActionEventArgs("LoginAndGetServiceId", "Aborted"));
+                ActionEndEvent(new ActionEventArgs("LoginAndGetServiceId", "Aborted"));
                 AbortAction = false;
                 return null;
             }
 
-            byte[] loginRawResponse = WebClient.UploadValues(webLoginUrl, "POST", webLoginCredidentials);
+            byte[] loginRawResponse = WebClient.UploadValues(webLoginUrl, "POST", webLoginCredentials);
             string webResponse = Encoding.UTF8.GetString(loginRawResponse);
             string serviceId = Regex.Match(webResponse,
                     "(<a [^>]*?href=[\"']/internet/ispis-spajanja\\?serviceid=)(\\d+)([\"'])")
                     .Groups[2].Value;
-            OnActionEnd(new ActionEventArgs("LoginAndGetServiceId", "Done"));
+            ActionEndEvent(new ActionEventArgs("LoginAndGetServiceId", "Done"));
             return serviceId;
         }
 
-        public override TrafficInfo GetTrafficInfo(string serviceId)
+        public override TrafficInfo GetTrafficInfoStep(string serviceId)
         {
-            OnActionStart(new ActionEventArgs("GetTrafficInfo", "Getting traffic info..."));
+            ActionStartEvent(new ActionEventArgs("GetTrafficInfo", "Getting traffic info..."));
             if (AbortAction)
             {
-                OnActionEnd(new ActionEventArgs("GetTrafficInfo", "Aborted"));
+                ActionEndEvent(new ActionEventArgs("GetTrafficInfo", "Aborted"));
                 AbortAction = false;
                 return null;
             }
@@ -88,9 +88,9 @@ namespace MaxAdsl_PP_Net.Utility
                 //WaitTrafficInfoReadyWebService(serviceId, ref webResponse);
                 WaitTrafficInfoReadyPage(serviceId, ref webResponse);
 
-            OnActionEnd(new ActionEventArgs("GetTrafficInfo", "Done"));
+            ActionEndEvent(new ActionEventArgs("GetTrafficInfo", "Done"));
 
-            OnActionStart(new ActionEventArgs("GetTrafficInfo", "Parsing traffic data..."));
+            ActionStartEvent(new ActionEventArgs("GetTrafficInfo", "Parsing traffic data..."));
             string trafficData = Regex.Match(webResponse, "<table.*?>.+?</table>", RegexOptions.Singleline).Value;
 
             Match m = Regex.Match(trafficData,
@@ -107,7 +107,7 @@ namespace MaxAdsl_PP_Net.Utility
                 Uploaded = uploaded,
                 Total = total
             };
-            OnActionEnd(new ActionEventArgs("GetTrafficInfo", "Done"));
+            ActionEndEvent(new ActionEventArgs("GetTrafficInfo", "Done"));
             return retVal;
         }
 
@@ -118,14 +118,14 @@ namespace MaxAdsl_PP_Net.Utility
             {
                 if (AbortAction)
                 {
-                    OnActionEnd(new ActionEventArgs("WaitTrafficInfoReadyPage", "Aborted"));
+                    ActionEndEvent(new ActionEventArgs("WaitTrafficInfoReadyPage", "Aborted"));
                     AbortAction = false;
                     return;
                 }
 
-                OnActionEnd(new ActionEventArgs("WaitTrafficInfoReadyPage", "Not ready"));
+                ActionEndEvent(new ActionEventArgs("WaitTrafficInfoReadyPage", "Not ready"));
                 System.Threading.Thread.Sleep((3 / checkTrafficInfoCount++ + 1) * 1000);
-                OnActionStart(new ActionEventArgs("WaitTrafficInfoReadyPage", "Getting traffic info..."));
+                ActionStartEvent(new ActionEventArgs("WaitTrafficInfoReadyPage", "Getting traffic info..."));
                 webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
             } while (webResponse.Contains("Učitavam podatke"));
         }

@@ -1,4 +1,8 @@
-﻿using System;
+﻿using MaxAdsl_PP_Net.Model;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Threading;
 namespace MaxAdsl_PP_Net.Utility
 {
     abstract class WebParser
@@ -6,8 +10,8 @@ namespace MaxAdsl_PP_Net.Utility
         // Public
         public virtual System.Net.WebClient WebClient { get; set; }
 
-        private bool abortAction = false;
-        public virtual bool AbortAction { get { return abortAction; } set { abortAction = value; } }
+        public virtual bool AbortAction { get; set; }
+        public bool IsRunning { get; set; }
 
         public class ActionEventArgs : EventArgs
         {
@@ -21,9 +25,18 @@ namespace MaxAdsl_PP_Net.Utility
                 Message = message;
             }
         }
-        public delegate void OnActionHandler(object sender, ActionEventArgs e);
-        public event EventHandler<ActionEventArgs> ActionStart;
-        public event EventHandler<ActionEventArgs> ActionEnd;
+        public class TrafficInfoEventArgs : EventArgs
+        {
+            public TrafficInfo TrafficInfo { get; set; }
+            public TrafficInfoEventArgs() { }
+            public TrafficInfoEventArgs(TrafficInfo t)
+            {
+                TrafficInfo = t;
+            }
+        }
+        public event EventHandler<ActionEventArgs> OnActionStart;
+        public event EventHandler<ActionEventArgs> OnActionEnd;
+        public event EventHandler<TrafficInfoEventArgs> OnTrafficInfoComplete;
 
 
 
@@ -31,16 +44,17 @@ namespace MaxAdsl_PP_Net.Utility
         protected string webStartUrl;
         protected string webLoginUrl;
         protected string webTrafficUrl;
-
+        protected NameValueCollection webLoginCredentials;
+        protected string serviceId;
 
 
         // Public Method Definitions
-        public abstract System.Collections.Specialized.NameValueCollection GetLoginTokens();
+        public abstract NameValueCollection GetLoginTokensStep();
 
-        public abstract string LoginAndGetServiceId(System.Collections.Specialized.NameValueCollection webLoginCredidentials);
+        public abstract string LoginAndGetServiceIdStep(NameValueCollection webLoginCredentials);
 
-        public abstract MaxAdsl_PP_Net.Model.TrafficInfo GetTrafficInfo(string serviceId);
-
+        public abstract MaxAdsl_PP_Net.Model.TrafficInfo GetTrafficInfoStep(string serviceId);
+        
 
 
         // Implemented Methods
@@ -57,19 +71,59 @@ namespace MaxAdsl_PP_Net.Utility
 #endif
         }
 
-        // Private Methods
-        protected virtual void OnActionStart(ActionEventArgs e)
+        public TrafficInfo GetTrafficInfo(string username, string password)
         {
-            EventHandler<ActionEventArgs> handler = ActionStart;
+            AbortAction = false;
+            IsRunning = true;
+            TrafficInfo retVal;
+
+            if (webLoginCredentials == null)
+            {
+                webLoginCredentials = GetLoginTokensStep();
+                webLoginCredentials.Add(Properties.Settings.Default.WebLoginUsernameFieldName, username);
+                webLoginCredentials.Add(Properties.Settings.Default.WebLoginPasswordFieldName, password);
+            }
+
+            if (serviceId == null)
+                serviceId = LoginAndGetServiceIdStep(webLoginCredentials);
+
+            retVal = GetTrafficInfoStep(serviceId);
+            TrafficInfoCompleteEvent(retVal);
+            IsRunning = false;
+            return retVal;
+        }
+
+        public void GetTrafficInfoAsync(string username, string password)
+        {
+            Thread t = new Thread(delegate(object o)
+            {
+                string[] s = (string[])o;
+                GetTrafficInfo(s[0], s[1]);
+            });
+            t.Start(new string[]{username, password});
+        }
+
+        // Private Methods
+        protected virtual void ActionStartEvent(ActionEventArgs e)
+        {
+            EventHandler<ActionEventArgs> handler = OnActionStart;
             if (handler != null)
                 handler(this, e);
         }
 
-        protected virtual void OnActionEnd(ActionEventArgs e)
+        protected virtual void ActionEndEvent(ActionEventArgs e)
         {
-            EventHandler<ActionEventArgs> handler = ActionEnd;
+            EventHandler<ActionEventArgs> handler = OnActionEnd;
             if (handler != null)
                 handler(this, e);
         }
+
+        protected virtual void TrafficInfoCompleteEvent(TrafficInfo trafficInfo)
+        {
+            EventHandler<TrafficInfoEventArgs> handler = OnTrafficInfoComplete;
+            if (handler != null)
+                handler(this, new TrafficInfoEventArgs(trafficInfo));
+        }
+
     }
 }

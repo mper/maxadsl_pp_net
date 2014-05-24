@@ -43,7 +43,6 @@
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
-            this.bgwCheckTraffic = new System.ComponentModel.BackgroundWorker();
             this.tabControl1.SuspendLayout();
             this.tabTraffic.SuspendLayout();
             this.tabSettings.SuspendLayout();
@@ -201,14 +200,6 @@
             this.txtPassword.TabIndex = 9;
             this.txtPassword.UseSystemPasswordChar = true;
             // 
-            // bgwCheckTraffic
-            // 
-            this.bgwCheckTraffic.WorkerReportsProgress = true;
-            this.bgwCheckTraffic.WorkerSupportsCancellation = true;
-            this.bgwCheckTraffic.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwCheckTraffic_DoWork);
-            this.bgwCheckTraffic.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwCheckTraffic_ProgressChanged);
-            this.bgwCheckTraffic.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwCheckTraffic_RunWorkerCompleted);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -246,7 +237,6 @@
         private System.Windows.Forms.ComboBox cboWebType;
         private System.Windows.Forms.Label lblCheckTrafficOnStartup;
         private System.Windows.Forms.CheckBox cboCheckTrafficOnStartup;
-        private System.ComponentModel.BackgroundWorker bgwCheckTraffic;
     }
 }
 
