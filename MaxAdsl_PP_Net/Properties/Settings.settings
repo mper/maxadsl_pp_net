@@ -38,5 +38,8 @@
     <Setting Name="UnmodifiedPasswordDefinition" Type="System.String" Scope="Application">
       <Value Profile="(Default)">unmodified</Value>
     </Setting>
+    <Setting Name="WebTrafficReadyUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://moj.hrvatskitelekom.hr/App_Modules__SnT.THTCms.CSC.Modules.Package__SnT.THTCms.CSC.Modules.Profile.MojTProfileService.asmx/VerifyService</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

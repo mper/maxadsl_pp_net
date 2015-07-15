@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -14,15 +15,10 @@ namespace MaxAdsl_PP_Net.Utility
     {
 
         private int checkTrafficInfoCount;
+        string trafficReadyUrl = MaxAdsl_PP_Net.Properties.Settings.Default.WebTrafficReadyUrl;
         
         public WebParserFull() : base()
         {
-            WebClient = new CookieAwareWebClient();
-            WebClient.Encoding = Encoding.UTF8;
-            // Allow untrusted certificates
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            // Set chrome user agent
-            WebClient.Headers.Add(HttpRequestHeader.UserAgent, Properties.Settings.Default.EmulateUserAgent);
         }
 
         public override NameValueCollection GetLoginTokensStep()
@@ -86,7 +82,9 @@ namespace MaxAdsl_PP_Net.Utility
             
             if (webResponse.Contains("Učitavam podatke"))
                 //WaitTrafficInfoReadyWebService(serviceId, ref webResponse);
-                WaitTrafficInfoReadyPage(serviceId, ref webResponse);
+                WaitTrafficInfoReadyWebService(serviceId, ref webResponse);
+
+            webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
 
             ActionEndEvent(new ActionEventArgs("GetTrafficInfo", "Done"));
 
@@ -124,7 +122,7 @@ namespace MaxAdsl_PP_Net.Utility
                 }
 
                 ActionEndEvent(new ActionEventArgs("WaitTrafficInfoReadyPage", "Not ready"));
-                System.Threading.Thread.Sleep((3 / checkTrafficInfoCount++ + 1) * 1000);
+                System.Threading.Thread.Sleep((3 / ++checkTrafficInfoCount) * 1000);
                 ActionStartEvent(new ActionEventArgs("WaitTrafficInfoReadyPage", "Getting traffic info..."));
                 webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
             } while (webResponse.Contains("Učitavam podatke"));
@@ -136,61 +134,92 @@ namespace MaxAdsl_PP_Net.Utility
             string pageId = Regex.Match(webResponse, "(<form.*?requestedPageId=)(\\d*?)([\"'].*?>)").Groups[2].Value;
             string serviceIdToken = Regex.Match(webResponse, "(_serviceIdToken.*?=.*?[\"'])([\\w-]*?)([\"'])").Groups[2].Value;
             
-            
-            string verifierUrl = "https://moj.hrvatskitelekom.hr/App_Modules__SnT.THTCms.CSC.Modules.Package__SnT.THTCms.CSC.Modules.Profile.MojTProfileService.asmx/VerifyService";
-
-            NameValueCollection verifyService = new NameValueCollection()
-            {
-                {"requestedPageId", pageId},
-                {"serviceIdToken", serviceIdToken}
-            };
+            string verifyServiceJson = string.Format("{{serviceIdToken:\"{0}\", requestedPageId:{1}}}", serviceIdToken, pageId);
 
             WebHeaderCollection headerParams = WebClient.Headers;
-            WebClient.Headers = new WebHeaderCollection();
-            WebClient.Headers.Add("User-Agent", headerParams[HttpRequestHeader.UserAgent]);
-            WebClient.Headers.Add("Pragma", "no-cache");
-            WebClient.Headers.Add("Accept-Language", "en-US,en;q=0.5");
-            WebClient.Headers.Add("Accept-Encoding", "gzip,deflate");
-            //WebClient.Headers.Add("If-Modified-Since", "0");
-            WebClient.Headers.Add("X-Requested-With", "XMLHttpRequest");
-            WebClient.Headers.Add("Cache-Control", "no-cache");
-
-            //WebClient.Headers.Add("Origin", "https://moj.hrvatskitelekom.hr");
+            ////WebClient.Headers = new WebHeaderCollection();
             //WebClient.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
-            //client.Headers.Add("Connection", "keep-alive");
-            //client.Headers.Add("Content-Type", "application/json; charset=UTF-8");
-            //client.Headers.Add("Host", "m.moj.hrvatskitelekom.hr");
-            //client.Headers.Add("If-Modified-Since", "0");
-            //client.Headers.Add("Origin", "https://moj.hrvatskitelekom.hr");
-            //WebClient.Headers.Add("Referer", "https://moj.hrvatskitelekom.hr/internet/ispis-spajanja?serviceid=2664593");
-            //client.Headers.Add("Referer", "https://moj.hrvatskitelekom.hr/internet/pregled?serviceid=2664593");
-
-            //((CookieAwareWebClient)WebClient).RequestHeaderValues.Add("Accept", "application/json, text/javascript, */*; q=0.01");
-            
-
-            //CookieContainer cookie = client.CookieContainer;
-            //client.CookieContainer = null;
+            //WebClient.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
+            //WebClient.Headers.Add("Accept-Language", "en-US,en;q=0.8,bs;q=0.6,hr;q=0.4");
+            //WebClient.Headers.Add("Cache-Control", "max-age=0");
+            ////WebClient.Headers.Add("Connection", "keep-alive");
+            //WebClient.Headers[HttpRequestHeader.ContentType] = "application/json; charset=UTF-8";
+            ////WebClient.Headers.Add("Host", "moj.hrvatskitelekom.hr");
+            //WebClient.Headers.Add("Origin", "https://moj.hrvatskitelekom.hr");
+            //WebClient.Headers.Add("Referer", "https://moj.hrvatskitelekom.hr/internet/ispis-spajanja?serviceid=" + serviceId);
+            //WebClient.Headers.Add("User-Agent", headerParams[HttpRequestHeader.UserAgent]);
+            //WebClient.Headers.Add("X-AjaxRequest", "true");
+            //WebClient.Headers.Add("X-Requested-With", "XMLHttpRequest");
 
             do
             {
-                System.Threading.Thread.Sleep(1000);
-                byte[] loginRawResponse = WebClient.UploadValues(verifierUrl, "POST", verifyService);
+                System.Threading.Thread.Sleep((3 / ++checkTrafficInfoCount) * 1000);
+                //byte[] loginRawResponse = WebClient.UploadData(trafficReadyUrl, "POST", System.Text.Encoding.UTF8.GetBytes(verifyServiceJson));
+                //byte[] loginRawResponse = WebClient.UploadValues(trafficReadyUrl, "POST", verifyService);
+                try
+                {
+                    //webResponse = WebClient.UploadString(trafficReadyUrl, "POST", verifyServiceJson);
+                    // HACK: use reflection to set Host header
+                    HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(trafficReadyUrl));
+                    request.Method = "POST";
+                    request.Accept = "application/json, text/javascript, */*; q=0.01";
+                    request.Headers["Accept-Encoding"] = "gzip,deflate,sdch";
+                    request.Headers["Accept-Language"] = "en-US,en;q=0.8,bs;q=0.6,hr;q=0.4";
+                    request.Headers["Cache-Control"] = "max-age=0";
+                    //WebClient.Headers["Connection"] = "keep-alive");
+                    request.ContentType = "application/json; charset=UTF-8";
+                    //WebClient.Headers["Host"] = "moj.hrvatskitelekom.hr");
+                    request.Headers["Origin"] = "https://moj.hrvatskitelekom.hr";
+                    request.Referer = "https://moj.hrvatskitelekom.hr/internet/ispis-spajanja?serviceid=" + serviceId;
+                    request.UserAgent = headerParams[HttpRequestHeader.UserAgent];
+                    request.Headers["X-AjaxRequest"] = "true";
+                    request.Headers["X-Requested-With"] = "XMLHttpRequest";
+                    request.CookieContainer = ((CookieAwareWebClient)WebClient).CookieContainer;
+                    //request.Headers.GetType().InvokeMember("ChangeInternal",
+                    //    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod,
+                    //    null, request.Headers, new object[] { "Host", "moj.hrvatskitelekom.hr" });
+                    //request.Headers.GetType().InvokeMember("ChangeInternal",
+                    //    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod,
+                    //    null, request.Headers, new object[] { "Connection", "keep-alive" });
+
+                    TransportContext context;
+                    Stream s = request.GetRequestStream(out context);
+                    byte[] payload = Encoding.UTF8.GetBytes(verifyServiceJson);
+                    s.Write(payload, 0, payload.Length);
+                    s.Close();
+                    
+                    WebResponse response = request.GetResponse();
+                    using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+                    {
+                        webResponse = sr.ReadToEnd();
+                    }
+                }
+                catch (WebException e)
+                {
+                    if (e.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        HttpWebResponse response = (HttpWebResponse)e.Response;
+                        if ((int)response.StatusCode == 500)
+                        {
+                            using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+                            {
+                                webResponse = sr.ReadToEnd();
+                            }
+                        }
+                    }
+                }
+                //long length = request.GetResponse().ContentLength;
 #if DEBUG
                 // TODO: remove response decoding, for debugging purposes only
-                webResponse = Encoding.UTF8.GetString(loginRawResponse);
+                //webResponse = Encoding.UTF8.GetString(loginRawResponse);
 #endif
-                //if(client.ResponseHeaders["Content-Length"] == "10")
-                //    break;
+                if (webResponse.Contains("true"))
+                    break;
 
-                File.WriteAllText("debug.txt", WebClient.ToString());
-                System.Threading.Thread.Sleep(15000);
-                break;
             } while (true);
 
-            WebClient.Headers = headerParams;
-            //client.CookieContainer = cookie;
-
-            webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
+            //WebClient.Headers = headerParams;
+            //webResponse = WebClient.DownloadString(webTrafficUrl + serviceId);
         }
     }
 }

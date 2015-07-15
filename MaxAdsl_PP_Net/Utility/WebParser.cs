@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Net;
+using System.Text;
 using System.Threading;
 namespace MaxAdsl_PP_Net.Utility
 {
@@ -64,11 +66,18 @@ namespace MaxAdsl_PP_Net.Utility
             webLoginUrl = Properties.Settings.Default.WebLoginUrl;
             webTrafficUrl = Properties.Settings.Default.WebTrafficUrl;
 
-#if DEBUG
-            webStartUrl = Properties.Settings.Default.MockStartUrl;
-            webLoginUrl = Properties.Settings.Default.MockLoginUrl;
-            webTrafficUrl = Properties.Settings.Default.MockTrafficUrl;
-#endif
+            WebClient = new CookieAwareWebClient();
+            WebClient.Encoding = Encoding.UTF8;
+            // Allow untrusted certificates
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            // Set chrome user agent
+            WebClient.Headers.Add(HttpRequestHeader.UserAgent, Properties.Settings.Default.EmulateUserAgent);
+
+//#if DEBUG
+//            webStartUrl = Properties.Settings.Default.MockStartUrl;
+//            webLoginUrl = Properties.Settings.Default.MockLoginUrl;
+//            webTrafficUrl = Properties.Settings.Default.MockTrafficUrl;
+//#endif
         }
 
         public TrafficInfo GetTrafficInfo(string username, string password)

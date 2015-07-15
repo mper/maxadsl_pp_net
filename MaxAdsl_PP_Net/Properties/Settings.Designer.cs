@@ -76,6 +76,18 @@ namespace MaxAdsl_PP_Net.Properties {
                 return ((string)(this["WebTrafficUrl"]));
             }
         }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://moj.hrvatskitelekom.hr/App_Modules__SnT.THTCms.CSC.Modules.Package__SnT.T" +
+            "HTCms.CSC.Modules.Profile.MojTProfileService.asmx/VerifyService")]
+        public string WebTrafficReadyUrl
+        {
+            get
+            {
+                return ((string)(this["WebTrafficReadyUrl"]));
+            }
+        }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
